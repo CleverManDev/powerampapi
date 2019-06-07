@@ -87,12 +87,13 @@ public interface TableDefs {
 		public static final @NonNull String TITLE_TAG = "title_tag"; // NOTE: important to have it w/o table for headers-enabled compound selects
 
 		/**
-		 * Duration in miliseconds.
+		 * Duration in milliseconds.
 		 * Int.
 		 */
 		public static final @NonNull String DURATION = "duration";
 
 		/**
+		 * Seconds.
 		 * Int.
 		 */
 		public static final @NonNull String UPDATED_AT = TABLE + ".updated_at";
@@ -103,13 +104,15 @@ public interface TableDefs {
 		public static final @NonNull String FILE_TYPE = "file_type";
 
 		/**
+		 * Milliseconds
 		 * Int.
 		 */
 		public static final @NonNull String PLAYED_AT = TABLE + ".played_at";
 
 		/**
+		 * Seconds.
 		 * Int.
-		 * This is file last modified time actually, for most filesystems
+		 * This is file last modified time actually, for most Android variants
 		 */
 		public static final @NonNull String FILE_CREATED_AT = "file_created_at";
 
@@ -120,10 +123,16 @@ public interface TableDefs {
 		public static final @NonNull String AA_STATUS = TABLE + ".aa_status";
 
 		/**
-		 * Full path. Works only if the query is joined with the folders.
+		 * Full path. Works only if the query is joined with the folders, otherwise this will fail
 		 * String.
 		 */
 		public static final @NonNull String FULL_PATH = Folders.PATH + "||" + NAME;
+
+		/**
+		 * Full path. Doesn't depend on joining folders table
+		 * String.
+		 */
+		public static final @NonNull String FULL_PATH_NO_JOIN = "(SELECT folders.path FROM folders WHERE folders._id=folder_files.folder_id)||" + NAME;
 
 		/**
 		 * Int.
@@ -161,12 +170,13 @@ public interface TableDefs {
 		public static final @NonNull String YEAR = "year";
 
 		/**
+		 * Cue offset ms
 		 * Int.
 		 */
 		public static final @NonNull String OFFSET_MS = "offset_ms";
 
 		/**
-		 * If non-null - this is cue "source" (big single uncut) file with that given virtual folder id.
+		 * If non-null - this is cue "source" (big uncut image) file with that given virtual folder id.
 		 * NOTE: enforces 1-1 between source files and cues. No multiple cues per single image thus possible
 		 * Int.
 		 */
@@ -174,10 +184,11 @@ public interface TableDefs {
 
 		/**
 		 * First seen time.
+		 * Seconds.
 		 * Int.
 		 */
 		public static final @NonNull String CREATED_AT = TABLE + ".created_at";
-		
+
 		/**
 		 * Wave scan data
 		 * byte[] blob, nullable
@@ -190,6 +201,16 @@ public interface TableDefs {
 		public static final @NonNull String META = TABLE + ".meta";
 		
 		/**
+		 * Last played position in ms
+		 */
+		public static final @NonNull String LAST_POS = "last_pos";
+
+		/**
+		 * Long
+		 */
+		public static final @NonNull String SHUFFLE_ORDER = TABLE + ".shuffle_order";
+
+		/**
 		 * tag_status
 		 */
 		public static final int TAG_NOT_SCANNED = 0;
@@ -200,7 +221,7 @@ public interface TableDefs {
 
 	}
 
-	
+
 	public interface RawFiles extends Files {
 		public static final @NonNull String TABLE = "raw_files";
 
@@ -219,6 +240,7 @@ public interface TableDefs {
 		public static final @NonNull String TITLE_TAG = TABLE + ".title_tag";
 
 		/**
+		 * Seconds.
 		 * Int.
 		 */
 		public static final @NonNull String UPDATED_AT = TABLE + ".updated_at";
@@ -264,17 +286,17 @@ public interface TableDefs {
 		 * Int.
 		 */
 		public static final @NonNull String CREATED_AT = TABLE + ".created_at";
-		
+
 		/**
 		 * String
 		 */
 		public static final @NonNull String META = TABLE + ".meta";
-		
+
 		/**
 		 * String
 		 */
 		public static final @NonNull String ALBUM_TAG = TABLE + ".album_tag";
-		
+
 		/**
 		 * String
 		 */
@@ -290,10 +312,16 @@ public interface TableDefs {
 		public static final @NonNull String _ID = TABLE + "._id";
 
 		/**
-		 * Short name of the folder.
+		 * Name of the folder. Can be long for roots (e.g. can include storage description). 
 		 * String.
 		 */
 		public static final @NonNull String NAME = TABLE + ".name";
+
+		/**
+		 * (Always) short name of the folder.
+		 * String.
+		 */
+		public static final @NonNull String SHORT_NAME = TABLE + ".short_name";
 
 		/**
 		 * Short path of the parent folder.
@@ -302,11 +330,24 @@ public interface TableDefs {
 		public static final @NonNull String PARENT_NAME = TABLE + ".parent_name";
 
 		/**
+		 * Parent folder label (which can be much longer than just PARENT_NAME, e.g. include storage description) to display in the UI
+		 * String.
+		 */
+		public static final @NonNull String PARENT_LABEL = TABLE + ".parent_label";
+
+		/**
 		 * Full path of the folder.
 		 * String.
 		 */
 		// NOTE: avoid TABLE name here to allow using field in raw_files. "path" is (almost) unique column, also used in playlists
-		public static final @NonNull String PATH = "path"; 
+		public static final @NonNull String PATH = "path";
+
+		/**
+		 * This is the same as path for usual folders, but for cue virtual folders, this is path + name.
+		 * Used for proper folders/subfolders sorting.
+		 * String.
+		 */
+		public static final @NonNull String SORT_PATH = "sort_path";
 
 		/**
 		 * Folder album art/thumb image (short name).
@@ -320,6 +361,7 @@ public interface TableDefs {
 		public static final @NonNull String DIR_MODIFIED_AT = TABLE + ".dir_modified_at";
 
 		/**
+		 * Seconds.
 		 * Int.
 		 */
 		public static final @NonNull String UPDATED_AT = TABLE + ".updated_at";
@@ -327,52 +369,121 @@ public interface TableDefs {
 		 * Id of the parent folder or 0 for "root" folders.
 		 * Int.
 		 */
-		public static final @NonNull String PARENT_ID = TABLE + ".parent_id";	
+		public static final @NonNull String PARENT_ID = TABLE + ".parent_id";
 
 		/**
 		 * Int.
 		 */
 		public static final @NonNull String IS_CUE = TABLE + ".is_cue";
 
-		/**
-		 * Set for real (non-cue-virtual) folders, means number of cue source files inside this folder.
-		 * Int.
-		 */
-		public static final @NonNull String NUM_CUE_FILES = TABLE + ".num_cue_files";
 
 		/**
 		 * First seen time.
 		 * Int.
 		 */
 		public static final @NonNull String CREATED_AT = TABLE + ".created_at";
-		
+
 		/**
-		 * Number of child subfolders.
+		 * Number of direct child subfolders.
 		 * Int.
 		 */
 		public static final @NonNull String NUM_SUBFOLDERS = TABLE + ".num_subfolders";
 
 		/**
 		 * Number of tracks in this category, excluding cue source images
+		 * Int.
 		 */
 		public static final @NonNull String NUM_FILES = TABLE + ".num_files";
-		
+
 		/**
 		 * Number of tracks in this category, including cue source images
+		 * Int.
 		 */
 		public static final @NonNull String NUM_ALL_FILES = TABLE + ".num_all_files";
 		
 		/**
-		 * Bitwise flag.
+		 * Number of tracks in the whole folder hierarchy, excluding cue source images
 		 * Int.
 		 */
-		public static final @NonNull String AA_STATUS = TABLE + ".aa_status";
+		public static final @NonNull String HIER_NUM_FILES = TABLE + ".hier_num_files";
+
+		/**
+		 * Number of tracks in the whole folder hierarchy, including cue source images
+		 */
+		public static final @NonNull String HIER_NUM_ALL_FILES = TABLE + ".hier_num_all_files";
+
+		/**
+		 * Duration in milliseconds for the tracks inside this folder only, excluding cue source images
+		 * INTEGER
+		 */
+		public static final @NonNull String DURATION = TABLE + ".duration";
 		
 		/**
-		 * String.
-		 * Special calculated subquery column which retrieves short parent name 
+		 * Duration in milliseconds for the tracks inside this folder only, including cue source images
+		 * INTEGER
 		 */
-		public static final @NonNull String PARENT_NAME_SUBQUERY = "(SELECT name FROM folders AS f2 WHERE f2._id=folders.parent_id) AS parent_name_subquery";		
+		public static final @NonNull String DURATION_ALL = TABLE + ".duration_all";
+
+		/**
+		 * Duration in milliseconds for the whole hierarchy inside this folder, excluding cue source images
+		 * INTEGER
+		 */
+		public static final @NonNull String HIER_DURATION = TABLE + ".hier_duration";
+		
+		/**
+		 * Duration in milliseconds for the whole hierarchy inside this folder, including cue source images
+		 * INTEGER
+		 */
+		public static final @NonNull String HIER_DURATION_ALL = TABLE + ".hier_duration_all";
+
+		/**
+		 * Duration meta.
+		 * TEXT
+		 */
+		public static final @NonNull String DUR_META = TABLE + ".dur_meta";
+		/**
+		 * Duration meta including cues.
+		 * TEXT
+		 */
+		public static final @NonNull String DUR_ALL_META = TABLE + ".dur_all_meta";
+		/**
+		 * Hierarchy duration meta.
+		 * TEXT
+		 */
+		public static final @NonNull String HIER_DUR_META = TABLE + ".hier_dur_meta";
+		/**
+		 * Hierarchy duration meta including cues. 
+		 * TEXT
+		 */
+		public static final @NonNull String HIER_DUR_ALL_META = TABLE + ".hier_dur_all_meta";
+
+		/**
+		 * Bitwise flag.
+		 * INTEGER
+		 */
+		public static final @NonNull String AA_STATUS = TABLE + ".aa_status";
+
+		/**
+		 * INTEGER (boolean)
+		 */
+		public static final @NonNull String KEEP_LIST_POS = TABLE + ".keep_list_pos"; // Sync with RestLibraryListMemorizable
+
+		/**
+		 * INTEGER (boolean)
+		 */
+		public static final @NonNull String KEEP_TRACK_POS = TABLE + ".keep_track_pos"; // Sync with RestLibraryListMemorizable
+
+		/**
+		 * Calculated subquery column which retrieves parent name. 
+		 * TEXT
+		 */
+		public static final @NonNull String PARENT_NAME_SUBQUERY = "(SELECT name FROM folders AS f2 WHERE f2._id=folders.parent_id) AS parent_name_subquery";
+		
+		/**
+		 * Calculated subquery column which retrieves short parent name.
+		 * TEXT 
+		 */
+		public static final @NonNull String PARENT_SHORT_NAME_SUBQUERY = "(SELECT short_name FROM folders AS f2 WHERE f2._id=folders.parent_id) AS parent_short_name_subquery";
 	}
 
 
@@ -394,6 +505,7 @@ public interface TableDefs {
 		public static final @NonNull String ALBUM_SORT = "album_sort"; // NOTE: important to have it w/o table for headers-enabled compound selects
 
 		/**
+		 * NOTE: this is NULL for Unknown album, so not all joins are possible with just albums + album_artists (use folder_files for joins)
 		 * Int
 		 */
 		public static final @NonNull String ALBUM_ARTIST_ID = TABLE + ".album_artist_id";
@@ -403,22 +515,50 @@ public interface TableDefs {
 		 * Int.
 		 */
 		public static final @NonNull String CREATED_AT = TABLE + ".created_at";
-		
+
 		/**
 		 * Number of tracks in this category, excluding cue source images
 		 */
 		public static final @NonNull String NUM_FILES = TABLE + ".num_files";
-		
+
 		/**
 		 * Number of tracks in this category, including cue source images
 		 */
 		public static final @NonNull String NUM_ALL_FILES = TABLE + ".num_all_files";
-		
+
 		/**
 		 * Bitwise flag.
 		 * Int.
 		 */
 		public static final @NonNull String AA_STATUS = TABLE + ".aa_status";
+		
+		/**
+		 * The guessed album year
+		 */
+		public static final @NonNull String ALBUM_YEAR = "album_year";
+		
+		/**
+		 * Duration in milliseconds, excluding cue source images
+		 * Int.
+		 */
+		public static final @NonNull String DURATION = TABLE + ".duration";
+		
+		/**
+		 * Duration in milliseconds, including cue source images
+		 * Int.
+		 */
+		public static final @NonNull String DURATION_ALL = TABLE + ".duration_all";
+
+		/**
+		 * Duration meta.
+		 * TEXT
+		 */
+		public static final @NonNull String DUR_META = TABLE + ".dur_meta";
+		/**
+		 * Duration meta including cues.
+		 * TEXT
+		 */
+		public static final @NonNull String DUR_ALL_META = TABLE + ".dur_all_meta";
 	}
 
 
@@ -444,26 +584,46 @@ public interface TableDefs {
 		 * Int.
 		 */
 		public static final @NonNull String CREATED_AT = TABLE + ".created_at";
-		
+
 		/**
 		 * Bitwise flag.
 		 * Int.
 		 */
 		public static final @NonNull String AA_STATUS = TABLE + ".aa_status";
-		
+
 		/**
 		 * Number of tracks in this category, excluding cue source images
 		 */
 		public static final @NonNull String NUM_FILES = TABLE + ".num_files";
-		
+
 		/**
 		 * Number of tracks in this category, including cue source images
 		 */
 		public static final @NonNull String NUM_ALL_FILES = TABLE + ".num_all_files";
+		
+		/**
+		 * Duration in milliseconds, excluding cue source images
+		 * Int.
+		 */
+		public static final @NonNull String DURATION = TABLE + ".duration";
+		
+		/**
+		 * Duration in milliseconds, including cue source images
+		 * Int.
+		 */
+		public static final @NonNull String DURATION_ALL = TABLE + ".duration_all";
 
-		// Artists uses special where for cue sources, thus just count files is enough.
-		//public static final @NonNull String COUNT_FILES = "count(folder_files._id)";
-		//public static final @NonNull String COUNT_ALBUMS = "count(albums._id)";
+		/**
+		 * Duration meta.
+		 * TEXT
+		 */
+		public static final @NonNull String DUR_META = TABLE + ".dur_meta";
+		
+		/**
+		 * Duration meta including cues.
+		 * TEXT
+		 */
+		public static final @NonNull String DUR_ALL_META = TABLE + ".dur_all_meta";
 	}
 
 
@@ -490,7 +650,7 @@ public interface TableDefs {
 		 * Int.
 		 */
 		public static final @NonNull String CREATED_AT = TABLE + ".created_at";
-		
+
 		/**
 		 * Bitwise flag.
 		 * Int.
@@ -501,11 +661,35 @@ public interface TableDefs {
 		 * Number of tracks in this category, excluding cue source images
 		 */
 		public static final @NonNull String NUM_FILES = TABLE + ".num_files";
-		
+
 		/**
 		 * Number of tracks in this category, including cue source images
 		 */
 		public static final @NonNull String NUM_ALL_FILES = TABLE + ".num_all_files";
+		
+		/**
+		 * Duration in milliseconds, excluding cue source images
+		 * Int.
+		 */
+		public static final @NonNull String DURATION = TABLE + ".duration";
+		
+		/**
+		 * Duration in milliseconds, including cue source images
+		 * Int.
+		 */
+		public static final @NonNull String DURATION_ALL = TABLE + ".duration_all";
+		
+		/**
+		 * Duration meta.
+		 * TEXT
+		 */
+		public static final @NonNull String DUR_META = TABLE + ".dur_meta";
+		
+		/**
+		 * Duration meta including cues.
+		 * TEXT
+		 */
+		public static final @NonNull String DUR_ALL_META = TABLE + ".dur_all_meta";
 	}
 
 
@@ -533,6 +717,40 @@ public interface TableDefs {
 		 * Int.
 		 */
 		public static final @NonNull String CREATED_AT = TABLE + ".created_at";
+		
+		/**
+		 * Number of tracks in this category, excluding cue source images
+		 */
+		public static final @NonNull String NUM_FILES = TABLE + ".num_files";
+
+		/**
+		 * Number of tracks in this category, including cue source images
+		 */
+		public static final @NonNull String NUM_ALL_FILES = TABLE + ".num_all_files";
+		
+		/**
+		 * Duration in milliseconds, excluding cue source images
+		 * Int.
+		 */
+		public static final @NonNull String DURATION = TABLE + ".duration";
+		
+		/**
+		 * Duration in milliseconds, including cue source images
+		 * Int.
+		 */
+		public static final @NonNull String DURATION_ALL = TABLE + ".duration_all";
+
+		/**
+		 * Duration meta.
+		 * TEXT
+		 */
+		public static final @NonNull String DUR_META = TABLE + ".dur_meta";
+		
+		/**
+		 * Duration meta including cues.
+		 * TEXT
+		 */
+		public static final @NonNull String DUR_ALL_META = TABLE + ".dur_all_meta";
 	}
 
 
@@ -555,22 +773,46 @@ public interface TableDefs {
 		 * Int.
 		 */
 		public static final @NonNull String CREATED_AT = TABLE + ".created_at";
-		
+
 		/**
 		 * Bitwise flag.
 		 * Int.
 		 */
 		public static final @NonNull String AA_STATUS = TABLE + ".aa_status";
-		
+
 		/**
 		 * Number of tracks in this category, excluding cue source images
 		 */
 		public static final @NonNull String NUM_FILES = TABLE + ".num_files";
-		
+
 		/**
 		 * Number of tracks in this category, including cue source images
 		 */
 		public static final @NonNull String NUM_ALL_FILES = TABLE + ".num_all_files";
+		
+		/**
+		 * Duration in milliseconds, excluding cue source images
+		 * Int.
+		 */
+		public static final @NonNull String DURATION = TABLE + ".duration";
+		
+		/**
+		 * Duration in milliseconds, including cue source images
+		 * Int.
+		 */
+		public static final @NonNull String DURATION_ALL = TABLE + ".duration_all";
+
+		/**
+		 * Duration meta.
+		 * TEXT
+		 */
+		public static final @NonNull String DUR_META = TABLE + ".dur_meta";
+		
+		/**
+		 * Duration meta including cues.
+		 * TEXT
+		 */
+		public static final @NonNull String DUR_ALL_META = TABLE + ".dur_all_meta";
 	}
 
 	public interface Genres {
@@ -590,16 +832,40 @@ public interface TableDefs {
 		 * Int.
 		 */
 		public static final @NonNull String CREATED_AT = TABLE + ".created_at";
-		
+
 		/**
 		 * Number of tracks in this category, excluding cue source images
 		 */
 		public static final @NonNull String NUM_FILES = TABLE + ".num_files";
-		
+
 		/**
 		 * Number of tracks in this category, including cue source images
 		 */
 		public static final @NonNull String NUM_ALL_FILES = TABLE + ".num_all_files";
+
+		/**
+		 * Duration in milliseconds, excluding cue source images
+		 * Int.
+		 */
+		public static final @NonNull String DURATION = TABLE + ".duration";
+		
+		/**
+		 * Duration meta.
+		 * TEXT
+		 */
+		public static final @NonNull String DUR_META = TABLE + ".dur_meta";
+		
+		/**
+		 * Duration meta including cues.
+		 * TEXT
+		 */
+		public static final @NonNull String DUR_ALL_META = TABLE + ".dur_all_meta";
+		
+		/**
+		 * Duration in milliseconds, including cue source images
+		 * Int.
+		 */
+		public static final @NonNull String DURATION_ALL = TABLE + ".duration_all";
 
 		/**
 		 * Bitwise flag.
@@ -654,6 +920,11 @@ public interface TableDefs {
 		 * Int.
 		 */
 		public static final @NonNull String SORT = "sort";
+		
+		/**
+		 * Int.
+		 */
+		public static final @NonNull String PLAYED_AT = TABLE + ".played_at";
 	}
 
 
@@ -681,36 +952,61 @@ public interface TableDefs {
 		public static final @NonNull String PATH = TABLE + ".playlist_path";
 
 		/**
+		 * Seconds.
 		 * Int.
 		 */
 		public static final @NonNull String CREATED_AT = TABLE + ".created_at";
 		/**
+		 * Seconds.
 		 * Int.
 		 */
 		public static final @NonNull String UPDATED_AT = TABLE + ".updated_at";
 
 		/**
-		 * Number of files without cue images
+		 * Number of playlist entries
 		 */
 		public static final @NonNull String NUM_FILES = TABLE + ".num_files";
-		
+
 		/**
-		 * Number of files including cue images
+		 * Number of playlist entries. Since 824 - same as num_files.
+		 * Poweramp can insert CUE images into playlists if appropriate option enabled, or it skips them completely. In anycase, playlist should show # of all possible entries in it,
+		 * without filtering for CUE images
 		 * Since 796
 		 */
 		public static final @NonNull String NUM_ALL_FILES = TABLE + ".num_all_files";
-		
+
 		/**
 		 * Bitwise flag.
 		 * Int.
 		 */
 		public static final @NonNull String AA_STATUS = TABLE + ".aa_status";
-
-		// NOTE: requires CTE with durs, e.g.:
-		// with durs as (select (sum(duration)) as dur, album from folder_files inner join albums on albums._id=folder_files.album_id group by album_id) 
-		//    select (dur/3600000) || ':' || strftime('%M:%S', (dur/86400000.0)), dur, album from durs limit 10;
 		
-		public static final @NonNull String TOTAL_DURATION = "(dur/3600000) || ':' || strftime('%M:%S', (dur/86400000.0))";
+		/**
+		 * Boolean.
+		 */
+		public static final @NonNull String KEEP_LIST_POS = TABLE + ".keep_list_pos"; // Sync with RestLibraryListMemorizable
+
+		/**
+		 * Boolean.
+		 */
+		public static final @NonNull String KEEP_TRACK_POS = TABLE + ".keep_track_pos"; // Sync with RestLibraryListMemorizable
+		
+		/**
+		 * Duration in milliseconds.
+		 * Int.
+		 */
+		public static final @NonNull String DURATION = TABLE + ".duration";
+		
+		/**
+		 * Duration meta.
+		 * TEXT
+		 */
+		public static final @NonNull String DUR_META = TABLE + ".dur_meta";
+
+		/**
+		 * Calculated column
+		 * INTEGER (boolean)
+		 */
 		public static final @NonNull String IS_FILE = TABLE + ".playlist_path IS NOT NULL AS _is_file";
 	}
 
@@ -728,6 +1024,7 @@ public interface TableDefs {
 		public static final @NonNull String FOLDER_FILE_ID = TABLE + ".folder_file_id";
 
 		/**
+		 * Milliseconds
 		 * Int.
 		 */
 		public static final @NonNull String CREATED_AT = TABLE + ".created_at";
@@ -736,7 +1033,7 @@ public interface TableDefs {
 		 * Int.
 		 */
 		public static final @NonNull String SORT = TABLE + ".sort";
-
+		
 		public static final @NonNull String CALC_PLAYED = "folder_files.played_at >= queue.created_at"; // If played at is the same as queue entry time, consider it played already 
 		public static final @NonNull String CALC_UNPLAYED = "folder_files.played_at < queue.created_at";
 	}
@@ -788,20 +1085,26 @@ public interface TableDefs {
 		 * Int.
 		 */
 		public static final @NonNull String BIND_TO_BT = "bind_to_bt";
-		
+
 		/**
 		 * 1 if preset is bound to USB audio output, 0 otherwise.
 		 * Int.
 		 */
 		public static final @NonNull String BIND_TO_USB = "bind_to_usb";
-		
+
 		/**
 		 * 1 if preset is bound to other audio outputs, 0 otherwise.
 		 * Int.
 		 */
 		public static final @NonNull String BIND_TO_OTHER = "bind_to_other";
+
+		/**
+		 * 1 if preset is bound to chromecast output, 0 otherwise.
+		 * Int.
+		 */
+		public static final @NonNull String BIND_TO_CHROMECAST = "bind_to_cc";
 	}
-	
+
 	public static final class EqPresetSongs implements BaseColumns {
 		public static final @NonNull String TABLE = "eq_preset_songs";
 

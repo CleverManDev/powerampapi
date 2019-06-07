@@ -73,6 +73,10 @@
 		<item name="com.maxmpz.audioplayer:ItemHeaderPlayButton">@style/ItemHeaderPlayButton</item>
 		<item name="com.maxmpz.audioplayer:ItemHeaderSelectButton">@style/ItemHeaderSelectButton</item>
 
+		<!-- The text header button (text header => header without background image for categories like Albums, Playlists, etc. -->
+		<item name="com.maxmpz.audioplayer:ItemTextHeaderShuffleButton">@style/ItemTextHeaderShuffleButton</item>
+
+
 		<!-- Override menu button in just scene_header scene -->
 		<item name="com.maxmpz.audioplayer:ItemTrackMenu_scene_header">@style/ItemTrackMenu_scene_header</item>
 
@@ -83,8 +87,26 @@
 		<item name="com.maxmpz.audioplayer:ItemTrackTitle_scene_header_1">@style/ItemTrackTitle_scene_header_1</item>
 
 		<!-- Few more adjustments are needed for "back decors" as they should have same layout as title for proper animations -->
+		<!-- Also, we override all possible backdecor styles/scenes here just to demonstrate how to apply some styles too all possible
+		     backdecor combinations:
+		     - top backdecor (Library => any top category)
+		     - text backdecor (Top category => child list)
+		     - item backdecor (List => List with cover background)
+		       + scene_header_1 for 1-line categories (Artists, Generes, etc.)
+		     NOTE: generally you don't need to override all such styles, this is why they are commented here - we override only the styles we need for sample skin
+		-->
+		<!--
+		<item name="com.maxmpz.audioplayer:ItemTopTextBackDecorTitle">@style/ItemTopTextBackDecorTitle</item>
+		<item name="com.maxmpz.audioplayer:ItemTopTextBackDecorTitle_scene_header_back_decor">@style/ItemTopTextBackDecorTitle_scene_header_back_decor</item>
+
+		<item name="com.maxmpz.audioplayer:ItemTextBackDecorTitle">@style/ItemTextBackDecorTitle</item>
+		<item name="com.maxmpz.audioplayer:ItemTextBackDecorTitle_scene_header_back_decor">@style/ItemTextBackDecorTitle_scene_header_back_decor</item>
+		-->
+
 		<item name="com.maxmpz.audioplayer:ItemTrackBackDecorTitle">@style/ItemTrackBackDecorTitle</item>
 		<item name="com.maxmpz.audioplayer:ItemTrackBackDecorTitle_scene_header_1">@style/ItemTrackBackDecorTitle_scene_header_1</item>
+		<!--<item name="com.maxmpz.audioplayer:ItemTrackBackDecorTitle_scene_header_back_decor">@style/ItemTrackBackDecorTitle_scene_header_back_decor</item>-->
+
 
 		<!-- Change volume panel slightly (optional panel, can be enabled in Poweramp Audio settings -->
 		<item name="com.maxmpz.audioplayer:VolumePanelFrame">@style/VolumePanelFrame</item>
@@ -180,6 +202,11 @@
 
 	<style name="ItemHeaderShuffleButton" parent="com.maxmpz.audioplayer:ItemHeaderShuffleButton">
 		<item name="android:background">@drawable/ripple_button</item>
+		<item name="com.maxmpz.audioplayer:drawableTint">#f00</item>
+	</style>
+
+	<style name="ItemTextHeaderShuffleButton" parent="com.maxmpz.audioplayer:ItemTextHeaderShuffleButton">
+		<item name="com.maxmpz.audioplayer:drawableTint">#00f</item>
 	</style>
 
 	<style name="ItemHeaderPlayButton" parent="com.maxmpz.audioplayer:ItemHeaderPlayButton">
@@ -203,18 +230,73 @@
 		<item name="android:layout_marginBottom">52.5dp</item>
 	</style>
 
+	<!--
+	<style name="ItemTopTextBackDecorTitle" parent="com.maxmpz.audioplayer:ItemTopTextBackDecorTitle">
+		<item name="android:textColor">#f00</item>
+	</style>
+	<style name="ItemTopTextBackDecorTitle_scene_header_back_decor" parent="com.maxmpz.audioplayer:ItemTopTextBackDecorTitle_scene_header_back_decor">
+		<item name="android:textColor">#f00</item>
+	</style>
+
+	<style name="ItemTextBackDecorTitle" parent="com.maxmpz.audioplayer:ItemTextBackDecorTitle">
+		<item name="android:textColor">#f00</item>
+	</style>
+	<style name="ItemTextBackDecorTitle_scene_header_back_decor" parent="com.maxmpz.audioplayer:ItemTextBackDecorTitle_scene_header_back_decor">
+		<item name="android:textColor">#f00</item>
+	</style>
+	-->
+
 	<style name="ItemTrackBackDecorTitle" parent="com.maxmpz.audioplayer:ItemTrackBackDecorTitle">
 		<item name="android:layout_marginBottom">86dp</item>
+		<!--<item name="android:textColor">#f00</item>-->
 	</style>
 	<style name="ItemTrackBackDecorTitle_scene_header_1" parent="com.maxmpz.audioplayer:ItemTrackBackDecorTitle_scene_header_1">
 		<item name="android:layout_marginBottom">52.5dp</item>
+		<!--<item name="android:textColor">#f00</item>-->
 	</style>
+	<!--
+	<style name="ItemTrackBackDecorTitle_scene_header_back_decor" parent="com.maxmpz.audioplayer:ItemTrackBackDecorTitle_scene_header_back_decor">
+		<item name="android:textColor">#f00</item>
+	</style>
+	-->
+
+
+	<!-- Optional styles for color1 option, color2 option select, and bg_color popup -->
+	<style name="SampleSkin_color1">
+		<item name="android:textColorPrimary">#f00</item>
+	</style>
+	<style name="SampleSkin_color_red">
+		<item name="android:textColorPrimary">#f00</item>
+	</style>
+	<style name="SampleSkin_color_green">
+		<item name="android:textColorPrimary">#0f0</item>
+	</style>
+	<style name="SampleSkin_color_blue">
+		<item name="android:textColorPrimary">#00f</item>
+	</style>
+
+	<style name="SampleSkin_bg_color_red">
+		<item name="com.maxmpz.audioplayer:colorBgPrimary">#faa</item>
+		<item name="com.maxmpz.audioplayer:colorBgNavbar">#faa</item>
+		<item name="com.maxmpz.audioplayer:colorAABgColor">#faa</item>
+	</style>
+	<style name="SampleSkin_bg_color_green">
+		<item name="com.maxmpz.audioplayer:colorBgPrimary">#afa</item>
+		<item name="com.maxmpz.audioplayer:colorBgNavbar">#afa</item>
+		<item name="com.maxmpz.audioplayer:colorAABgColor">#afa</item>
+	</style>
+	<style name="SampleSkin_bg_color_blue">
+		<item name="com.maxmpz.audioplayer:colorBgPrimary">#aaf</item>
+		<item name="com.maxmpz.audioplayer:colorBgNavbar">#aaf</item>
+		<item name="com.maxmpz.audioplayer:colorAABgColor">#aaf</item>
+	</style>
+
 
 
 
 	<!-- Optional style for SampleSkin_transparentNavbar option. Poweramp applies optional styles on top of the skin theme, if such option is checked by user in settings.
 	     NOTE: as fully transparent navigation bar is supported by Android 8.0+, we have different variants of this style for v21-25 (Android 5-7), and for v26+ (Android 8+).
-	     NOTE: this is overriden in values-land (back to default), as we don't want UI to go under navigation bar in landscape, as navigation bar is to the right / left
+	     NOTE: this is overridden in values-land (back to default), as we don't want UI to go under navigation bar in landscape, as navigation bar is to the right / left
 	-->
 	<style name="SampleSkin_transparentNavbarBase">
 
@@ -355,6 +437,70 @@
 	<style name="ItemTrackPlayingMark_scenes_hidden">
 		<item name="com.maxmpz.audioplayer:baseScene">defaultScene</item>
 		<item name="android:visibility">invisible</item>
+	</style>
+
+
+	<!-- Mini spectrum on main screen option -->
+	<style name="SampleSkin_mainMiniSpectrum">
+		<item name="com.maxmpz.audioplayer:TopContainer_extraLayout">@layout/merge_main_mini_spectrum</item>
+	</style>
+
+	<style name="SampleSkin_mainMiniSpectrum_MilkFRS_base">
+		<!-- Using transparent background.
+			 NOTE: this works only with "bars" visualizations
+		-->
+		<!--<item name="com.maxmpz.audioplayer:bgColor">?com.maxmpz.audioplayer:colorBgPrimary</item>-->
+		<!--<item name="com.maxmpz.audioplayer:bgColor">#000</item>-->
+		<item name="com.maxmpz.audioplayer:bgColor">#0000</item>
+		<!--
+			Poweramp uses (for eq screen):
+
+		    "internal://#fft2inv" - black bars
+			"internal://#fft2" - light bars
+
+		    But here, we're using own milk preset from our skin assets directory (assets/milk_presets/SampleSkin - spectrum-main.milk)
+
+		    NOTE: if Poweramp fails to load preset, it will load some default one (Poweramp - spectrum-centered) and will complain in log
+		    NOTE: presetUri is an URI and should be properly escaped (e.g. spaces in #fragment => %20, etc.)
+		    NOTE: Poweramp uses "small" profile for such visualization components, they don't support milkdrop scripts/shaders, just "bar" spectrum
+
+		    List of Poweramp builtin spectrum presets:
+		        internal://#fft1
+		        internal://#fft2
+		        internal://#fft2inv
+				builtin://#Poweramp%20-%20spectrum-centered
+				builtin://#Poweramp%20-%20spectrum-centered-narrow
+				builtin://#Poweramp%20-%20spectrum-centered-reflected
+				builtin://#Poweramp%20-%20spectrum-centered-wide
+				builtin://#Poweramp%20-%20spectrum-dots
+				builtin://#Poweramp%20-%20spectrum-narrow
+				builtin://#Poweramp%20-%20spectrum-plain
+				builtin://#Poweramp%20-%20spectrum-quads-narrow
+				builtin://#Poweramp%20-%20spectrum-reflected-wide
+				builtin://#Poweramp%20-%20spectrum-wide
+		 -->
+		<!--<item name="com.maxmpz.audioplayer:presetUri">internal://#fft2</item>-->
+		<item name="com.maxmpz.audioplayer:presetUri">apk://com.poweramp.v3.sampleskin#SampleSkin%20-%20spectrum-main.milk</item>
+	</style>
+
+	<style name="SampleSkin_mainMiniSpectrum_MilkFRS" parent="SampleSkin_mainMiniSpectrum_MilkFRS_base">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">64dp</item>
+		<item name="com.maxmpz.audioplayer:layout_attachTop">@com.maxmpz.audioplayer:id/sub_aa_buttons</item>
+		<item name="android:layout_marginLeft">0dp</item>
+		<item name="android:layout_marginTop">0dp</item>
+		<item name="android:layout_marginBottom">0dp</item>
+		<item name="android:layout_marginRight">0dp</item>
+	</style>
+
+	<style name="SampleSkin_transBgMain">
+		<item name="com.maxmpz.audioplayer:TopMilk">@style/SampleSkin_transBgMain_TopMilk</item>
+		<item name="android:windowShowWallpaper">true</item>
+		<item name="android:windowBackground">@android:color/transparent</item>
+	</style>
+
+	<style name="SampleSkin_transBgMain_TopMilk" parent="@com.maxmpz.audioplayer:style/TopMilk">
+		<item name="android:visibility">gone</item>
 	</style>
 
 

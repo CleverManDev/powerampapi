@@ -21,43 +21,51 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.maxmpz.poweramp.widgetpackcommon;
 
 import android.graphics.Bitmap;
-
+import android.util.Log;
 import com.maxmpz.poweramp.player.PowerampAPI;
 
 /**
  * The data required for widget update
  */
 public class WidgetUpdateData {
+	private static final String TAG = "WidgetUpdateData";
+	private static final boolean LOG = false;
+
 	public int apiVersion;
-	
+
 	public boolean hasTrack;
 	public String title;
-	public String album;
+	public String album; // null for hide_unknown_album + unknown album
 	public String artist;
 	public boolean supportsCatNav;
 	public int posInList;
 	public int listSize;
 	public int flags;
-	
+
 	public Bitmap albumArtBitmap;
 	public long albumArtTimestamp;
+	public boolean albumArtResolved;
 
 	public boolean playing;
 
 	public int shuffle = PowerampAPI.ShuffleMode.SHUFFLE_NONE;
 	public int repeat = PowerampAPI.RepeatMode.REPEAT_NONE;
-	
+
 	public boolean albumArtNoAnim; // Used by widget configurator
-	
+
 	@Override
 	public String toString() {
-		return super.toString() + " hasTrack=" + hasTrack + " title=" + title + " album=" + album + " artist=" + artist + " supportsCatNav=" + supportsCatNav +  
-								" posInList=" + posInList + " listSize=" + listSize + " flags=0x" + Integer.toHexString(flags) + " albumArtBitmap=" + albumArtBitmap + 
-								" albumArtTimestamp=" + albumArtTimestamp + " playing=" + playing + " shuffle=" + shuffle + " repeat=" + repeat;
+		return super.toString() + " hasTrack=" + hasTrack + " title=" + title + " album=" + album + " artist=" + artist + " supportsCatNav=" + supportsCatNav +
+				" posInList=" + posInList + " listSize=" + listSize + " flags=0x" + Integer.toHexString(flags) + " albumArtBitmap=" + albumArtBitmap +
+				" albumArtTimestamp=" + albumArtTimestamp + " playing=" + playing + " shuffle=" + shuffle + " repeat=" + repeat;
 	}
-	
-	
+
+	/**
+	 * Resets textual track information, but not album art, as album art is generally independent from track info (==can be shared between different tracks).
+	 * Same for repeat/shuffle, playing state
+	 */
 	public void resetTrackData() {
+		if(LOG) Log.w(TAG, "resetTrackData", new Exception());
 		hasTrack = false;
 		title = album = artist = null;
 		supportsCatNav = false;

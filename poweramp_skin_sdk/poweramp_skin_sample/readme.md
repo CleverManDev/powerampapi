@@ -28,18 +28,19 @@ opens Poweramp skin settings or directly start Poweramp with target skin applied
 
 ### How to start own skin (based on sample skin)
 
-Skin development is done directly from Android Studio (3.1.4 was used for these skins development).
+Skin development is done directly from Android Studio (3.2 was used for these skins development).
 * clone this repository, rename appropriately and change **[values/strings.xml](app/src/main/res/values/strings.xml)** labels and **[xml/skins.xml](app/src/main/res/xml/skins.xml)** entries
 * change application package, preferable to something containing **".poweramp.v3.skins."** as this is the substring that will be used in Poweramp to search for skin APKs in Play
 * edit app/build.gradle, replace ../../../audioplayer/bin/audioplayer.apk with path to your Poweramp v3 APK (**build 795** and above)
 ```
 additionalParameters "--shared-lib", "-I", "path to your Poweramp v3 APK"
 ```
-
+* your emulated device needs to have Poweramp v3 installed (e.g. locate your Android\Sdk\platform-tools folder and copy the poweramp.apk into it.
+Open a shell and enter `./adb install poweramp.apk`)
 * build and run skin as a normal Android app
 * when skin activity is started, "Start Poweramp With * Skin" button can be pressed to force Poweramp immediately reload the skin
 * skin should appear in Poweramp skin selection settings page as well
-
+* **if skin fails, ensure Android Studio's "Instant Run" feature is turned off (Prefs > Build, Execution, Deployment > Instant Run**
 
 ### How Poweramp v3 skins work
 
@@ -98,18 +99,74 @@ Poweramp v3 has concept of a scene. A view can be rendered in the target scene (
 
 This is why many attributes/styles are ending with "_scene.." suffix, as for almost each view addition per-scene styles are required.
 
-Scene generally defines initial and final view layout/position and some view parameters.
-
 Also, almost all Poweramp views are custom views, including layout (FastLayout) and text views (FastTextView). FastLayout is multi-paradigm layout, somewhat similar to ConstraintLayout,
-but faster, strictly one-pass per layout, and optimized for animations; and FastText is a fast text rendering view optimized for transitions. See **[reference_resources/values-sw1dp/attrs-powerui.xml](/poweramp_skin_sdk/reference_resources/values-sw1dp/attrs-powerui.xml)** for commented attributes definitions
+but faster, strictly one-pass per layout, and optimized for animations; and FastText is a fast text rendering view optimized for transitions. See **[reference_resources/values-sw1dp/attrs-powerui.xml](/poweramp_skin_sdk/reference_resources/values-sw1dp/attrs-powerui.xml)** for the commented attributes definitions
 for these views.
 
-See appropriate reference resources xmls for the details in the comments.
+### Poweramp v3 skin options
+Poweramp v3 supports unique feature allowing user selectable skin options to be defined by skin author. Option is an "overlap" style which is applied in addition to the main skin theme.
+See sample skin **[xml/skins.xml](app/src/main/res/xml/skins.xml)** for reference.
+
+Options include:
+* simple option with just a name (rendered as half-width switch), or with a summary (rendered as 2 line switch):
+```xml
+<option
+    key="[preference unique key]"
+    name="[visible name]"
+    summary="[optional summary]"
+    overlapStyle="[overlap style reference]"
+    checkedByDefault="[true|false]"/>
+```
+* set of a radio buttons (build 810+). Only one selected value from the set of options is applied:
+```xml
+<radio
+    key="[preference unique key]"
+    name="[visible name]"
+    summary="[optional summary]"
+    defaultValue="[optional default overlap style reference]">
+        <option
+            name="[visible name]"
+            summary="[optional summary]"
+            overlapStyle="[overlap style reference, can be an empty string]"
+        />
+        ...
+</radio>
+```
+* option with a popup option chooser list (build 810+). Only one selected value from the set of options is applied:
+```xml
+<popup
+    key="[preference unique key]"
+    name="[visible name]"
+    summary="[optional summary, can include %s pattern which is replaced by currently selected option name]"
+    defaultValue="[optional default overlap style reference]">
+        <option
+            name="[visible name]"
+            overlapStyle="[overlap style reference, can be an empty string]"
+        />
+        ...
+</popup>
+```
+
+Most options support limited set of html tags inside **name** and **summary** attributes. These allow e.g. specifying color:
+```xml
+<option
+    ...
+    name="@string/skin_text_color1"
+    ...
+/>
+
+```
+where skin_text_color1 is defined in strings.xml with html tags inside:
+```xml
+<string name="skin_text_color1"><![CDATA[Text color <span style=\"color: #ff0000;\">⬤</span>]]></string>
+```
+
+
 
 ### Difference vs Poweramp v2 skins
 * Poweramp v2 skins are not compatible with Poweramp v3, Poweramp v3 skins are not compatible with Poweramp v2
 * Poweramp v2 skins relied on skin provided layout xmls, v3 skins rely on style redefinitions, layouts xmls can't be changed by skin (except for few injected specific **merge_** layouts)
-* much less raster graphics in default skins, but this is open for skin author, there is no limitation on raster images
+* less bitmap graphics in default skins, but this is open for skin author, there is no any limitation on bitmap images
 
 
 ### Reference resources
@@ -127,7 +184,7 @@ The most important files are:
 
 ### License
 
-Copyright (C) 2010-2018 Maksim Petrov
+Copyright (C) 2010-2019 Maksim Petrov
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted for themes, skins, widgets, plugins, applications and other software
